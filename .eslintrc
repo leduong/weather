@@ -1,0 +1,24 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["airbnb-base", "prettier"],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {},
+  "rules": {
+    "import/no-cycle": "warn",
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "never",
+        "prev": ["singleline-const", "singleline-let", "singleline-var"],
+        "next": ["singleline-const", "singleline-let", "singleline-var"]
+      }
+    ],
+    "import/order": "off"
+  },
+  "parserOptions": {
+    "sourceType": "module"
+  }
+}
