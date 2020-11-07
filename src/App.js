@@ -10,6 +10,7 @@ function App() {
   const [onChangeForecast$] = useState(() => new Subject());
   const [cities, setCities] = useState([]);
   const [forecasts, setForecasts] = useState([]);
+  const [isLoading, setLoading] = useState(false);
 
   const searchByCityName = key =>
     fromFetch(`/api/location/search/?query=${key}`).pipe(
@@ -48,12 +49,14 @@ function App() {
     });
 
     const cities$ = onChangeCity$.pipe(debounceTime(1000)).subscribe(key => {
+      setLoading(true);
       searchByCityName(key).subscribe(results => {
         setCities(results);
 
         // Reset forecasts
         setForecasts([]);
         results.map(x => onChangeForecast$.next(x.woeid));
+        setLoading(false);
       });
     });
     return () => {
@@ -66,30 +69,37 @@ function App() {
     onChangeCity$.next(value);
   };
 
+  const showLoading = loading => {
+    return !loading ? (
+      <></>
+    ) : (
+      <span>
+        <i className="fa fa-refresh fa-spin"></i> Loading...
+      </span>
+    );
+  };
   const dayOfWeek = date => moment(date).format('dddd');
   const isTemperature = temp => (Number(temp) > 10 ? temp.toFixed() : `0${temp.toFixed()}`);
 
   const showDaysForecast = woeid => {
     const daysByWoeId = forecasts.filter(x => x.woeid === woeid)[0];
-    return !daysByWoeId ? (
-      <></>
-    ) : (
-      daysByWoeId.days.map((x, idx) => {
-        return (
-          <div className="col" key={idx}>
-            <div className="card">
-              <div className="card-body">
-                <div className="justify-content-center">
-                  <div className="w-100 p-3">{dayOfWeek(x.applicable_date)}</div>
-                  <div className="w-100">Min:{isTemperature(x.min_temp)}</div>
-                  <div className="w-100">Max:{isTemperature(x.max_temp)}</div>
+    return !daysByWoeId
+      ? showLoading(!daysByWoeId?.days)
+      : daysByWoeId.days.map((x, idx) => {
+          return (
+            <div className="col" key={idx}>
+              <div className="card">
+                <div className="card-body">
+                  <div className="justify-content-center">
+                    <div className="w-100 p-3">{dayOfWeek(x.applicable_date)}</div>
+                    <div className="w-100">Min:{isTemperature(x.min_temp)}</div>
+                    <div className="w-100">Max:{isTemperature(x.max_temp)}</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })
-    );
+          );
+        });
   };
 
   return (
@@ -108,20 +118,18 @@ function App() {
         />
       </div>
 
-      {!cities.length ? (
-        <></>
-      ) : (
-        cities.map((c, idx) => {
-          return (
-            <div className="card mb-1" key={idx}>
-              <div className="card-header">{c.title}</div>
-              <div className="card-body">
-                <div className="row">{showDaysForecast(c.woeid)}</div>
+      {!cities.length
+        ? showLoading(isLoading)
+        : cities.map((c, idx) => {
+            return (
+              <div className="card mb-1" key={idx}>
+                <div className="card-header">{c.title}</div>
+                <div className="card-body">
+                  <div className="row">{showDaysForecast(c.woeid)}</div>
+                </div>
               </div>
-            </div>
-          );
-        })
-      )}
+            );
+          })}
     </div>
   );
 }
