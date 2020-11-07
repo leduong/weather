@@ -1,5 +1,5 @@
+@import 'node_modules/font-awesome/scss/font-awesome.scss';
 @import '~bootstrap/scss/bootstrap.scss';
-// @import '~/font-awesome/scss/font-awesome.scss';
 .has-search {
   .form-control {
     padding-left: 2.375rem;
@@ -16,4 +16,9 @@
     pointer-events: none;
     color: #aaa;
   }
+}
+
+.mb-1 {
+  margin-bottom: 1rem;
+  text-align: center;
 }
