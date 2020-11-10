@@ -8,6 +8,16 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+## Clone the repo and install npm package before start
+
+```
+$ git clone https://github.com/leduong/weather.git
+$ cd weather
+$ yarn && yarn start
+or use
+$ npm install && npm start
+```
+
 ### `yarn start`
 
 Runs the app in the development mode.\
